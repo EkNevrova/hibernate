@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="db hibernate" author="ek.nevrova">
+        <sql>
+            -- Создание таблицы students
+            CREATE TABLE students (
+            id BIGSERIAL PRIMARY KEY,
+            first_name VARCHAR(50) NOT NULL,
+            last_name VARCHAR(50) NOT NULL,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
+            -- Создание таблицы courses
+            CREATE TABLE courses (
+            id BIGSERIAL PRIMARY KEY,
+            title VARCHAR(100) NOT NULL,
+            description TEXT,
+            credit_hours INT NOT NULL
+            );
+
+            -- Создание таблицы enrollments (связь ManyToMany)
+            CREATE TABLE enrollments (
+            student_id BIGSERIAL NOT NULL,
+            course_id BIGSERIAL NOT NULL,
+            enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (student_id, course_id),
+            FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+            );
+
+            -- Создание таблицы grades
+            CREATE TABLE grades (
+            id BIGSERIAL PRIMARY KEY,
+            student_id BIGSERIAL NOT NULL,
+            course_id BIGSERIAL NOT NULL,
+            grade_value INT CHECK (grade_value BETWEEN 0 AND 100),
+            FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+            );
+
+            -- Наполнение таблицы students
+            INSERT INTO students (first_name, last_name, email) VALUES
+            ('Иван', 'Иванов', 'ivan.ivanov@example.com'),
+            ('Пётр', 'Петров', 'petr.petrov@example.com'),
+            ('Алексей', 'Алексеев', 'alexey.ale@example.com'),
+            ('Мария', 'Сидорова', 'maria.sidorova@example.com'),
+            ('Ольга', 'Кузнецова', 'olga.kuznetsova@example.com'),
+            ('Дмитрий', 'Смирнов', 'dmitry.smirnov@example.com'),
+            ('Анна', 'Васильева', 'anna.vasilyeva@example.com'),
+            ('Сергей', 'Михайлов', 'sergey.mihaylov@example.com'),
+            ('Елена', 'Федорова', 'elena.fedorova@example.com'),
+            ('Николай', 'Лебедев', 'nikolay.lebedev@example.com'),
+            ('Виктория', 'Романова', 'viktoria.romanova@example.com'),
+            ('Кирилл', 'Анатольев', 'kirill.anatolev@example.com');
+
+            -- Наполнение таблицы courses
+            INSERT INTO courses (title, description, credit_hours) VALUES
+            ('Математика', 'Курс математического анализа', 4),
+            ('Физика', 'Общий курс физики', 3),
+            ('Программирование', 'Основы Java и Hibernate', 5),
+            ('Литература', 'Познание классической литературы', 2),
+            ('История', 'История Средневековья', 3);
+
+            -- Наполнение таблицы enrollments (связь ManyToMany)
+            -- Здесь студент записывается на один или несколько курсов.
+            INSERT INTO enrollments (student_id, course_id) VALUES
+            (1, 1),
+            (1, 3),
+            (2, 1),
+            (2, 2),
+            (3, 3),
+            (3, 4),
+            (4, 1),
+            (4, 5),
+            (5, 3),
+            (6, 2),
+            (7, 3),
+            (8, 1),
+            (9, 4),
+            (10, 5),
+            (11, 2),
+            (12, 3),
+            (12, 5);
+
+            -- Наполнение таблицы grades (оценки студентов по курсам)
+            INSERT INTO grades (student_id, course_id, grade_value) VALUES
+            (1, 1, 85),
+            (1, 3, 90),
+            (2, 1, 75),
+            (2, 2, 80),
+            (3, 3, 95),
+            (3, 4, 88),
+            (4, 1, 70),
+            (4, 5, 82),
+            (5, 3, 78),
+            (6, 2, 92),
+            (7, 3, 85),
+            (8, 1, 88),
+            (9, 4, 90),
+            (10, 5, 76),
+            (11, 2, 84),
+            (12, 3, 91),
+            (12, 5, 87);
+        </sql>
+    </changeSet>
+</databaseChangeLog>
