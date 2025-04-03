@@ -5,5 +5,5 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table (name = "enrollments")
-public class Enrolment {
+public class Enrollment {
 }
