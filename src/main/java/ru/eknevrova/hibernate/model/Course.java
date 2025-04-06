@@ -3,9 +3,13 @@ package ru.eknevrova.hibernate.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table (name = "courses")
 public class Course {
@@ -22,5 +26,9 @@ public class Course {
     @Column (name = "credit_hours", nullable = false)
     private Integer creditHours;
 
+    @ManyToMany(mappedBy = "courses")
+    private List<Student> students = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enrollment> enrollments = new ArrayList<>();
 }

@@ -9,7 +9,8 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table (name = "students")
 public class Student {
@@ -43,11 +44,11 @@ public class Student {
         this.lastModifiedAt = LocalDateTime.now();
     }
 
-    @ManyToMany
+    @ManyToMany (fetch = FetchType.LAZY)
     @JoinTable(
             name = "enrollments",
-            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
-            joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
+            inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
+            joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id")
     )
     private List<Course> courses = new ArrayList<>();
 
